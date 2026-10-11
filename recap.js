@@ -21,11 +21,17 @@ document.addEventListener('click', e => {
   // reset satu soal, atau semua soal di halaman
   const one = e.target.closest('.reset'), every = e.target.closest('.resetall');
   if (one || every) {
-    (one ? [one.closest('.q')] : document.querySelectorAll('.q.dijawab')).forEach(q => {
+    const qs = one ? [one.closest('.q')] : document.querySelectorAll('.q.dijawab');
+    if (qs.length > 1 && !confirm(`Reset ${qs.length} jawaban?`)) return;
+    qs.forEach(q => {
       q.classList.remove('dijawab');
       q.querySelectorAll('.op').forEach(o => { o.disabled = false; o.classList.remove('benar', 'salah'); });
       q.querySelector('details').open = false;
     });
+    if (every) {  // kembali ke keadaan awal: jawaban yang dibuka lewat "Buka semua" ikut tertutup
+      document.querySelectorAll('.soal details[open]').forEach(d => d.open = false);
+      document.querySelectorAll('.openall').forEach(b => b.textContent = 'Buka semua jawaban');
+    }
     return;
   }
   const img = e.target.closest('figure img');
