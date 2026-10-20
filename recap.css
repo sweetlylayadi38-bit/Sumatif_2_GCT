@@ -1,5 +1,6 @@
 /* dasar halaman (di luar Claude tidak ada reset bawaan) */
 body{margin:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 img{max-width:100%}
 [hidden]{display:none!important}
 
@@ -23,6 +24,8 @@ body::before{content:"";position:fixed;z-index:-1;right:0;bottom:0;height:100vh;
 @media (max-width:860px){
   body::before{inset:0;height:auto;aspect-ratio:auto;background-position:center bottom;opacity:.24;-webkit-mask-image:none;mask-image:none}
   .lec .body,.lec header{background:none;box-shadow:none}
+  /* tanpa halo di HP, jadi aman: kuliah di luar layar tidak dirender dulu */
+  .lec{content-visibility:auto;contain-intrinsic-size:auto 4000px}
 }
 
 *{box-sizing:border-box}
@@ -99,7 +102,7 @@ body.keys .body:not(.soal)>:not(h3,.key){display:none}
 body.keys .body h3{margin-top:1.75rem}
 
 /* bank soal */
-.q{padding-block:1.4rem;border-top:1px solid var(--line)}
+.q{padding-block:1.4rem;border-top:1px solid var(--line);content-visibility:auto;contain-intrinsic-size:auto 600px}
 .q:first-child{border-top:0;padding-top:0}
 .qn{font:500 .78rem var(--mono);color:var(--accent-ink);margin:0 0 .35rem}
 .q ol{padding-left:1.5rem}

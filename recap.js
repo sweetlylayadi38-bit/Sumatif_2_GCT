@@ -53,3 +53,11 @@ const spy = new IntersectionObserver(es => es.forEach(e => {
   if (matchMedia('(max-width:860px)').matches) a.parentNode.scrollTo({left: a.offsetLeft - a.parentNode.offsetLeft - 8});
 }), {rootMargin: '-20% 0px -75% 0px'});
 document.querySelectorAll('.lec').forEach(s => spy.observe(s));
+// Bagian di luar layar dirender belakangan (content-visibility), jadi tingginya baru perkiraan.
+// Setelah lompat ke #anchor, betulkan posisi sampai tidak bergeser lagi.
+const fixJump=()=>{const t=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!t)return;
+  const h=document.documentElement,sb=h.style.scrollBehavior;h.style.scrollBehavior='auto';let n=0,ok=0,last;
+  const go=()=>{t.scrollIntoView();const y=t.getBoundingClientRect().top;ok=y===last?ok+1:0;last=y;if(ok<3&&++n<30)requestAnimationFrame(go);else h.style.scrollBehavior=sb};go()};
+addEventListener('hashchange',fixJump);
+addEventListener('load',fixJump);
+document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(a&&a.hash===location.hash)requestAnimationFrame(fixJump)});
