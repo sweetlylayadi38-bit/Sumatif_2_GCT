@@ -140,3 +140,46 @@ footer{margin-top:5rem;padding-top:1.25rem;border-top:1px solid var(--line);font
 }
 .reset{font-size:.95rem;margin-bottom:.6rem}
 .q:not(.dijawab) .reset{display:none}
+
+/* Mnemonik dan rangkuman */
+.mn{margin-top:3.5rem;padding:1rem 1.2rem 1.1rem;border-left:2px solid var(--accent);background:rgb(var(--bg-rgb) / .55);border-radius:0 4px 4px 0}
+.mn>h3{margin:.2rem 0 .8rem}
+.mn h4{margin:1.3rem 0 .4rem}
+.mn-g{background:var(--accent-soft);border-radius:4px;padding:.8rem 1rem;margin:0 0 1rem}
+.mn-g::before,.mn-q::before{content:"Mnemonik";display:block;font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:.3rem}
+.mn-g::before{content:none}
+.mn-g ul{margin:.3rem 0 0}
+.mn-g>:last-child{margin-bottom:0}
+.mn-l{list-style:none;padding-left:0!important}
+.mn-l li{margin-bottom:.55rem}
+.mn-t{display:inline-block;font:500 .74rem/1.25 var(--mono);color:var(--accent-ink);border:1px solid var(--accent);border-radius:4px;padding:.1em .45em;margin-right:.3em;vertical-align:.1em}
+.mn-box{border-left:2px dashed var(--accent);padding:.3rem 0 .1rem .9rem;margin:-.2rem 0 1rem}
+.mn-q{border-left:2px dashed var(--accent);background:var(--surface);border-radius:0 4px 4px 0;padding:.55rem .9rem;margin:.6rem 0 .9rem}
+.mn-q p{margin:0}
+.topics .mn-chip{color:var(--accent-ink);border-color:var(--accent)}
+body.keys .body:not(.soal)>.mn{display:block}
+
+.rkw{max-width:none}
+.rk{border-top:1px solid var(--line)}
+.rk:last-child{border-bottom:1px solid var(--line)}
+.rk summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .7rem;padding:.8rem .2rem;cursor:pointer;list-style:none}
+.rk summary::-webkit-details-marker{display:none}
+.rk summary::before{content:"+";font:500 1rem var(--mono);color:var(--accent-ink);width:1rem}
+.rk[open] summary::before{content:"−"}
+.rk summary b{font:500 .8rem var(--mono);color:var(--accent-ink);width:2.4rem}
+.rk summary span{font:italic 600 1.2rem/1.3 var(--display);flex:1 1 12rem}
+.rk summary small{font:400 .75rem var(--mono);color:var(--muted)}
+.rk summary:hover span{color:var(--accent-ink)}
+.rkb{max-width:46rem;padding:.2rem 0 1.6rem 1.7rem}
+.rkb h4{margin-top:1.3rem}
+.hy{margin-top:1.6rem;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:.4rem 1rem .6rem}
+.hy h4{margin-top:.6rem!important}
+.qs{white-space:normal}
+.qs a{font:400 .78rem var(--mono);text-decoration:none;border:1px solid var(--line);border-radius:4px;padding:0 .35em;margin-right:.15em;display:inline-block}
+.qs a:hover{border-color:var(--accent)}
+.rkall{font:italic 600 1.05rem var(--text);color:var(--accent-ink);cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:.35rem .8rem}
+.rkall:hover{border-color:var(--accent)}
+@media (max-width:860px){
+  .rkb{padding-left:0}
+  .mn{padding:.8rem .9rem;margin-inline:-.2rem}
+}

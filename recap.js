@@ -61,3 +61,14 @@ const fixJump=()=>{const t=location.hash&&document.getElementById(decodeURICompo
 addEventListener('hashchange',fixJump);
 addEventListener('load',fixJump);
 document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(a&&a.hash===location.hash)requestAnimationFrame(fixJump)});
+
+// buka atau tutup semua rangkuman
+document.addEventListener('click', e => {
+  const b = e.target.closest('.rkall'); if (!b) return;
+  const open = b.textContent.startsWith('Buka');
+  document.querySelectorAll('details.rk').forEach(d => d.open = open);
+  b.textContent = (open ? 'Tutup' : 'Buka') + ' semua rangkuman';
+});
+// tautan ke rangkuman yang tertutup: buka dulu
+const openRk = () => { const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t && t.matches('details.rk')) t.open = true; };
+addEventListener('hashchange', openRk); openRk();
