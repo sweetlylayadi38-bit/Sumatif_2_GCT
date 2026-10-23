@@ -201,3 +201,14 @@ body.keys .body:not(.soal)>.mn{display:block}
 .st-rec{font-size:.95rem;color:var(--muted)}
 .st-w td:last-child{text-align:right}
 .st-w td:nth-child(4){min-width:15rem}
+
+/* layar slide: keterangan dan tombol lanjut */
+a.sl{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;cursor:zoom-in}
+.slgo{font:italic 600 1.1rem var(--text);color:var(--bg);background:var(--accent);border:0;border-radius:4px;padding:.55rem 1rem;cursor:pointer}
+.slgo:hover{background:var(--accent-ink)}
+dialog .zcap{margin:.5rem auto 0;max-width:min(96vw,60rem);color:var(--ink);font-size:1rem;line-height:1.4;text-align:center}
+dialog .znav{display:flex;justify-content:center;align-items:center;gap:.6rem;margin:.6rem auto 0;flex-wrap:wrap}
+dialog .znav[hidden]{display:none}
+dialog .znav button,dialog .zsoal{font:italic 600 1rem var(--text);color:var(--accent-ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:.45rem .9rem;cursor:pointer;text-decoration:none}
+dialog .znav button:hover,dialog .zsoal:hover{border-color:var(--accent)}
+dialog:has(.znav:not([hidden])) img{max-height:calc(96dvh - 7.5rem)}

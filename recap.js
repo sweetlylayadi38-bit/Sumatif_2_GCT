@@ -1,6 +1,6 @@
 const zoom = document.getElementById('zoom'), big = zoom.firstElementChild;
 document.addEventListener('click', e => {
-  if (e.target.closest('dialog')) return zoom.close();
+  if (e.target.closest('dialog')) { if (!e.target.closest('.znav')) zoom.close(); return; }
   const all = e.target.closest('.openall');
   if (all) {  // buka atau tutup semua jawaban di tahun itu
     const open = all.textContent.startsWith('Buka');
@@ -72,3 +72,41 @@ document.addEventListener('click', e => {
 // tautan ke rangkuman yang tertutup: buka dulu
 const openRk = () => { const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t && t.matches('details.rk')) t.open = true; };
 addEventListener('hashchange', openRk); openRk();
+
+// Slide prioritas: buka di layar penuh, lanjut ke slide berikutnya, tautan #sl-... langsung membuka slidenya
+const zcap = zoom.querySelector('.zcap'), znav = zoom.querySelector('.znav');
+let sls = [], at = -1;
+const slList = () => { const seen = new Set(); return [...document.querySelectorAll('#slide-top .st-l a.sl')].filter(a => !seen.has(a.href) && seen.add(a.href)); };
+const showSl = i => {
+  sls = sls.length ? sls : slList(); at = (i + sls.length) % sls.length;
+  const a = sls[at]; big.src = a.href; big.alt = a.dataset.cap;
+  zcap.textContent = `${at + 1}/${sls.length} · ${a.dataset.cap}`;
+  zoom.querySelector('.zsoal').href = '#' + a.dataset.id;
+  zcap.hidden = znav.hidden = false;
+  if (!zoom.open) zoom.showModal();
+};
+document.addEventListener('click', e => {
+  if (!zcap) return;
+  const step = e.target.closest('.znav [data-step]');
+  if (step) return showSl(at + +step.dataset.step);
+  if (e.target.closest('.zsoal')) return zoom.close();
+  const a = e.target.closest('a.sl'), go = e.target.closest('.slgo');
+  if (a || go) {
+    e.preventDefault(); sls = slList();
+    return showSl(go ? 0 : sls.findIndex(x => x.href === a.href));
+  }
+  // gambar biasa: tanpa keterangan dan navigasi
+  if (e.target.closest('figure img')) zcap.hidden = znav.hidden = true;
+});
+addEventListener('keydown', e => {
+  if (!zoom.open || znav.hidden) return;
+  if (e.key === 'ArrowRight') showSl(at + 1);
+  if (e.key === 'ArrowLeft') showSl(at - 1);
+});
+const openSl = () => {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id.startsWith('sl-') || !document.getElementById(id)) return;
+  sls = slList(); const i = sls.findIndex(x => x.dataset.id === id);
+  if (i >= 0) showSl(i);
+};
+addEventListener('hashchange', openSl); addEventListener('load', openSl);
