@@ -76,7 +76,7 @@ addEventListener('hashchange', openRk); openRk();
 // Slide prioritas: buka di layar penuh, lanjut ke slide berikutnya, tautan #sl-... langsung membuka slidenya
 const zcap = zoom.querySelector('.zcap'), znav = zoom.querySelector('.znav');
 let sls = [], at = -1;
-const slList = () => { const seen = new Set(); return [...document.querySelectorAll('#slide-top .st-l a.sl')].filter(a => !seen.has(a.href) && seen.add(a.href)); };
+const slList = () => { const seen = new Set(); return [...document.querySelectorAll('#slide-top .st-g a.sl')].filter(a => !seen.has(a.href) && seen.add(a.href)); };
 const showSl = i => {
   sls = sls.length ? sls : slList(); at = (i + sls.length) % sls.length;
   const a = sls[at]; big.src = a.href; big.alt = a.dataset.cap;

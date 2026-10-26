@@ -185,22 +185,19 @@ body.keys .body:not(.soal)>.mn{display:block}
 }
 
 /* Slide paling sering keluar */
-.st-w{max-width:46rem}
 .st{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line)}
 .st h3{margin-top:0}
 .st-t{display:inline-block;font:500 .72rem/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:.15em .5em;vertical-align:.25em;margin-right:.3em;font-style:normal}
 .st-t.p1{background:var(--accent);color:var(--bg)}
 .st-t.p2{border:1px solid var(--accent);color:var(--accent-ink)}
 .st-t.p3{border:1px solid var(--line);color:var(--muted)}
-.st-figs{grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.7rem}
-.st-figs figcaption{font:400 .78rem var(--mono);margin-top:.3rem}
-.st-l{padding-left:1.4rem}
-.st-l li{margin-bottom:.9rem}
-.st-n{font:500 .85rem var(--mono);color:var(--accent-ink);margin-right:.4rem}
+.st-g{list-style:none;padding:0!important;margin:1rem 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:1.2rem 1rem}
+.st-g li{margin:0}
+.st-g img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+.st-g p{margin:.35rem 0 0;font-size:.95rem;line-height:1.5}
+.st-g b{font:500 .85rem var(--mono);color:var(--accent-ink);margin-right:.2rem}
+.st-g .qs a{font:400 .75rem var(--mono);color:var(--muted)}
 .st-c{font:400 .75rem var(--mono);background:var(--accent-soft);color:var(--accent-ink);border-radius:4px;padding:.05em .4em;margin-right:.3rem}
-.st-rec{font-size:.95rem;color:var(--muted)}
-.st-w td:last-child{text-align:right}
-.st-w td:nth-child(4){min-width:15rem}
 
 /* layar slide: keterangan dan tombol lanjut */
 a.sl{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;cursor:zoom-in}
