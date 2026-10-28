@@ -209,3 +209,20 @@ dialog .znav[hidden]{display:none}
 dialog .znav button,dialog .zsoal{font:italic 600 1rem var(--text);color:var(--accent-ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:.45rem .9rem;cursor:pointer;text-decoration:none}
 dialog .znav button:hover,dialog .zsoal:hover{border-color:var(--accent)}
 dialog:has(.znav:not([hidden])) img{max-height:calc(96dvh - 7.5rem)}
+
+/* Kenapa jawabannya ini dan contoh soal per pilihan */
+.why{margin:.8rem 0 1rem;border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:.3rem .9rem .5rem}
+.why-h{font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin:.4rem 0 .5rem!important}
+.why-l{list-style:none;padding:0!important;margin:0!important}
+.why-l>li{padding:.55rem 0 .6rem .7rem;border-top:1px solid var(--line);border-left:3px solid transparent;margin:0!important}
+.why-l>li:first-child{border-top:0}
+.why-l>li.ok{border-left-color:var(--ok)}
+.why-l>li.pilih{border-left-color:var(--bad);background:var(--bad-soft)}
+.why-m{font:500 .85rem var(--mono)}
+.ok .why-m{color:var(--ok)}
+.no .why-m{color:var(--bad)}
+.why-o{font-style:italic;color:var(--muted)}
+.cs{margin-top:.4rem}
+.cs summary{font:italic 600 .98rem var(--text);color:var(--accent-ink);cursor:pointer;width:fit-content}
+.cs p{margin:.35rem 0 0!important}
+.cs[open]{background:rgb(var(--bg-rgb) / .5);border-radius:4px;padding:.4rem .6rem .5rem;margin-left:-.6rem}

@@ -7,4 +7,5 @@ Buka `index.html`, atau aktifkan GitHub Pages (Settings, Pages, branch `main`, f
 - `index.html`: isi halaman
 - `recap.css`: tampilan
 - `recap.js`: interaksi (jawab soal, reset, perbesar gambar, buka rangkuman, layar slide prioritas dengan tombol berikutnya)
+- `why/<tahun>.json`: alasan untuk setiap pilihan a-e dan contoh soal bila jawabannya pilihan lain; dimuat saat pembahasan soal dibuka
 - `img/`: gambar slide dan gambar soal

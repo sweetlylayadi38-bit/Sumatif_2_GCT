@@ -110,3 +110,27 @@ const openSl = () => {
   if (i >= 0) showSl(i);
 };
 addEventListener('hashchange', openSl); addEventListener('load', openSl);
+
+// Kenapa jawabannya ini dan contoh soal per pilihan: data per tahun (why/<tahun>.json), dimuat saat pembahasan dibuka
+const whyData = {}, whyEsc = t => t.replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
+const whyLoad = yr => whyData[yr] ??= fetch(`why/${yr}.json?v=1`).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+const whyFill = async d => {
+  const q = d.closest('.q'); if (!q || !q.id || d.dataset.why) return;
+  d.dataset.why = 1;
+  const w = (await whyLoad(q.id.slice(1, 5)))[q.id]; if (!w) return;
+  const ops = [...q.querySelectorAll('.op')], L = 'abcdefgh';
+  let h = '<div class="why"><p class="why-h">Kenapa jawabannya ini, kenapa bukan yang lain</p>';
+  if (w.o.inti) h += `<p>${w.o.inti}</p>`;
+  else h += '<ul class="why-l">' + ops.map((o, i) => {
+    const k = L[i], ok = o.hasAttribute('data-ok'), cs = w.c && w.c[k];
+    return `<li class="${ok ? 'ok' : 'no'}" data-k="${k}"><span class="why-m">${ok ? '✓' : '✗'} ${k}.</span> <span class="why-o">${whyEsc(o.textContent)}</span><br>${w.o[k] || ''}` +
+      (cs ? `<details class="cs"><summary>Contoh soal yang jawabannya ${k}</summary><p>${cs}</p><p class="note">Pilihan a sampai ${L[ops.length - 1]} sama seperti soal di atas. Jawaban: <b>${k}. ${whyEsc(o.textContent)}</b></p></details>` : '') + '</li>';
+  }).join('') + '</ul>';
+  (d.querySelector('.mn-q') || d.querySelector('.ans')).insertAdjacentHTML('afterend', h + '</div>');
+  whyMark(q);
+};
+// tandai alasan untuk pilihan yang tadi diklik
+const whyMark = q => { const s = q.querySelector('.op.salah'); if (!s) return;
+  const k = 'abcdefgh'[[...q.querySelectorAll('.op')].indexOf(s)], li = q.querySelector(`.why-l li[data-k="${k}"]`); if (li) li.classList.add('pilih'); };
+document.addEventListener('toggle', e => { if (e.target.matches('.q > details') && e.target.open) whyFill(e.target); }, true);
+document.addEventListener('click', e => { const q = e.target.closest('.op') && e.target.closest('.q'); if (q) setTimeout(() => whyMark(q)); });
