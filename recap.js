@@ -4,7 +4,7 @@ document.addEventListener('click', e => {
   const all = e.target.closest('.openall');
   if (all) {  // buka atau tutup semua jawaban di tahun itu
     const open = all.textContent.startsWith('Buka');
-    all.closest('.lec').querySelectorAll('details').forEach(d => d.open = open);
+    all.closest('.lec').querySelectorAll('.q > details').forEach(d => d.open = open);  // contoh soal di dalamnya tetap tertutup
     all.textContent = (open ? 'Tutup' : 'Buka') + ' semua jawaban';
     return;
   }
@@ -26,6 +26,7 @@ document.addEventListener('click', e => {
     qs.forEach(q => {
       q.classList.remove('dijawab');
       q.querySelectorAll('.op').forEach(o => { o.disabled = false; o.classList.remove('benar', 'salah'); });
+      q.querySelectorAll('.pilih').forEach(li => li.classList.remove('pilih'));
       q.querySelector('details').open = false;
     });
     if (every) {  // kembali ke keadaan awal: jawaban yang dibuka lewat "Buka semua" ikut tertutup
