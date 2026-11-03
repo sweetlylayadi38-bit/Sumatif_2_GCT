@@ -114,7 +114,7 @@ addEventListener('hashchange', openSl); addEventListener('load', openSl);
 
 // Kenapa jawabannya ini dan contoh soal per pilihan: data per tahun (why/<tahun>.json), dimuat saat pembahasan dibuka
 const whyData = {}, whyEsc = t => t.replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
-const whyLoad = yr => whyData[yr] ??= fetch(`why/${yr}.json?v=1`).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+const whyLoad = yr => whyData[yr] ??= fetch(`why/${yr}.json?v=2`).then(r => r.ok ? r.json() : {}).catch(() => ({}));
 const whyFill = async d => {
   const q = d.closest('.q'); if (!q || !q.id || d.dataset.why) return;
   d.dataset.why = 1;
