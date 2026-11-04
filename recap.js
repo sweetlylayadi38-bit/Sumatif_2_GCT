@@ -1,6 +1,29 @@
 const zoom = document.getElementById('zoom'), big = zoom.firstElementChild;
+const zcap = zoom.querySelector('.zcap'), znav = zoom.querySelector('.znav');
+
+// Jawaban disimpan per id soal, jadi tetap ada setelah halaman dimuat ulang
+const store = (() => { try { return JSON.parse(localStorage.getItem('jawaban')) || {}; } catch { return {}; } })();
+const keep = () => { try { localStorage.setItem('jawaban', JSON.stringify(store)); } catch {} };
+const answer = op => {  // hijau bila benar; bila salah, pilihan itu merah dan kuncinya hijau
+  const q = op.closest('.q');
+  op.classList.add(op.hasAttribute('data-ok') ? 'benar' : 'salah');
+  q.querySelector('.op[data-ok]').classList.add('benar');
+  q.querySelectorAll('.op').forEach(o => o.disabled = true);
+  q.querySelector('details').open = true;
+  q.classList.add('dijawab');
+};
+for (const [id, i] of Object.entries(store)) { const op = document.getElementById(id)?.querySelectorAll('.op')[i]; if (op) answer(op); }
+
 document.addEventListener('click', e => {
-  if (e.target.closest('dialog')) { if (!e.target.closest('.znav')) zoom.close(); return; }
+  if (e.target.closest('dialog')) {
+    const soal = e.target.closest('.zsoal');
+    if (soal) {  // tutup layar slide dan tampilkan daftar soal slide itu, tanpa membuka slidenya lagi
+      e.preventDefault();
+      history.replaceState({pos: {id: soal.hash.slice(1), off: pad()}}, '', soal.hash);
+      zoom.close(); go(soal.hash.slice(1));
+    } else if (!e.target.closest('.znav')) zoom.close();
+    return;
+  }
   const all = e.target.closest('.openall');
   if (all) {  // buka atau tutup semua jawaban di tahun itu
     const open = all.textContent.startsWith('Buka');
@@ -9,13 +32,9 @@ document.addEventListener('click', e => {
     return;
   }
   const op = e.target.closest('.op');
-  if (op) {  // hijau bila benar; bila salah, pilihan itu merah dan kuncinya hijau
-    const q = op.closest('.q');
-    op.classList.add(op.hasAttribute('data-ok') ? 'benar' : 'salah');
-    q.querySelector('.op[data-ok]').classList.add('benar');
-    q.querySelectorAll('.op').forEach(o => o.disabled = true);
-    q.querySelector('details').open = true;
-    q.classList.add('dijawab');
+  if (op) {
+    answer(op);
+    const q = op.closest('.q'); store[q.id] = [...q.querySelectorAll('.op')].indexOf(op); keep();
     return;
   }
   // reset satu soal, atau semua soal di halaman
@@ -28,20 +47,22 @@ document.addEventListener('click', e => {
       q.querySelectorAll('.op').forEach(o => { o.disabled = false; o.classList.remove('benar', 'salah'); });
       q.querySelectorAll('.pilih').forEach(li => li.classList.remove('pilih'));
       q.querySelector('details').open = false;
+      delete store[q.id];
     });
+    keep();
     if (every) {  // kembali ke keadaan awal: jawaban yang dibuka lewat "Buka semua" ikut tertutup
       document.querySelectorAll('.soal details[open]').forEach(d => d.open = false);
       document.querySelectorAll('.openall').forEach(b => b.textContent = 'Buka semua jawaban');
     }
     return;
   }
-  const img = e.target.closest('figure img');
-  if (img) { big.src = img.src; big.alt = img.alt; zoom.showModal(); }
+  const img = e.target.closest('figure img');  // gambar biasa: tanpa keterangan dan navigasi
+  if (img) { big.src = img.src; big.alt = img.alt; zcap.hidden = znav.hidden = true; push({dlg: 'img'}); zoom.showModal(); }
 });
 
 const keys = document.getElementById('keys');
-keys.onchange = () => document.body.classList.toggle('keys', keys.checked);
-keys.onchange();
+const syncKeys = () => document.body.classList.toggle('keys', keys.checked);
+keys.onchange = syncKeys; syncKeys();
 
 // tandai kuliah yang sedang dibaca di daftar
 const links = Object.fromEntries([...document.querySelectorAll('.side nav a')].map(a => [a.hash.slice(1), a]));
@@ -53,15 +74,61 @@ const spy = new IntersectionObserver(es => es.forEach(e => {
   a.setAttribute('aria-current', 'true');
   if (matchMedia('(max-width:860px)').matches) a.parentNode.scrollTo({left: a.offsetLeft - a.parentNode.offsetLeft - 8});
 }), {rootMargin: '-20% 0px -75% 0px'});
-document.querySelectorAll('.lec').forEach(s => spy.observe(s));
-// Bagian di luar layar dirender belakangan (content-visibility), jadi tingginya baru perkiraan.
-// Setelah lompat ke #anchor, betulkan posisi sampai tidak bergeser lagi.
-const fixJump=()=>{const t=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!t)return;
-  const h=document.documentElement,sb=h.style.scrollBehavior;h.style.scrollBehavior='auto';let n=0,ok=0,last;
-  const go=()=>{t.scrollIntoView();const y=t.getBoundingClientRect().top;ok=y===last?ok+1:0;last=y;if(ok<3&&++n<30)requestAnimationFrame(go);else h.style.scrollBehavior=sb};go()};
-addEventListener('hashchange',fixJump);
-addEventListener('load',fixJump);
-document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(a&&a.hash===location.hash)requestAnimationFrame(fixJump)});
+const lecs = [...document.querySelectorAll('.lec')];
+lecs.forEach(s => spy.observe(s));
+
+// Posisi baca disimpan di riwayat sebagai id elemen + jaraknya dari atas layar, bukan piksel halaman:
+// bagian di luar layar dirender belakangan (content-visibility), jadi tingginya baru perkiraan dan piksel lama meleset.
+history.scrollRestoration = 'manual';
+const pad = () => parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+const lastAbove = (els, y) => {  // elemen terakhir yang atasnya sudah lewat y (urutan dokumen = urutan atas ke bawah)
+  let lo = 0, hi = els.length - 1, r;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (els[m].getBoundingClientRect().top <= y) { r = els[m]; lo = m + 1; } else hi = m - 1; }
+  return r;
+};
+const here = () => {
+  const y = pad() + 1, lec = lastAbove(lecs, y); if (!lec) return;
+  const el = lastAbove([...lec.querySelectorAll('h3[id], .q[id], li[id]')], y) || lec;
+  return {id: el.id, off: el.getBoundingClientRect().top};
+};
+const save = () => { const pos = here(); if (pos) try { history.replaceState({...history.state, pos}, ''); } catch {} };
+let saveT;
+addEventListener('scroll', () => { clearTimeout(saveT); saveT = setTimeout(save, 150); }, {passive: true});
+addEventListener('pagehide', save);
+const push = (st, url) => { save(); history.pushState({...st, pushed: 1, pos: history.state?.pos}, '', url); };
+
+// Tinggi bagian bisa berubah sesudah lompat, jadi betulkan posisi sampai diam. Hanya satu yang aktif,
+// dan berhenti begitu pengguna menggulir, menyentuh, atau menekan tombol.
+let run = 0;
+['wheel', 'touchstart', 'keydown'].forEach(t => addEventListener(t, () => run++, {passive: true}));
+const settle = (id, off) => {
+  const el = document.getElementById(id); if (!el) return;
+  const lec = el.closest('.lec'), me = ++run; let n = 0, still = 0;
+  const step = () => {
+    if (me !== run) return;
+    // bagian yang belum dirender masih setinggi perkiraannya, jadi target bisa berada di luar kotaknya:
+    // tuju dulu awal bagiannya supaya dirender, baru targetnya
+    const t = el.getBoundingClientRect().top, b = lec ? lec.getBoundingClientRect() : {bottom: t};
+    const y = scrollY, d = (t > b.bottom ? b.top : t) - off;
+    if (Math.abs(d) > 1) scrollBy(0, d);
+    still = Math.abs(d) <= 1 || scrollY === y ? still + 1 : 0;
+    if (still < 5 && ++n < 120) requestAnimationFrame(step);
+  };
+  step();
+};
+const go = id => {  // lompat ke #id; rangkuman yang tertutup dibuka dulu
+  const el = document.getElementById(id); if (!el) return;
+  if (el.matches('details.rk')) el.open = true;
+  settle(id, pad());
+};
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.target.closest('dialog') || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const id = decodeURIComponent(a.hash.slice(1)); if (!document.getElementById(id)) return;
+  e.preventDefault(); save();
+  if (a.hash !== location.hash) history.pushState(null, '', a.hash);
+  go(id);
+});
 
 // buka atau tutup semua rangkuman
 document.addEventListener('click', e => {
@@ -70,12 +137,8 @@ document.addEventListener('click', e => {
   document.querySelectorAll('details.rk').forEach(d => d.open = open);
   b.textContent = (open ? 'Tutup' : 'Buka') + ' semua rangkuman';
 });
-// tautan ke rangkuman yang tertutup: buka dulu
-const openRk = () => { const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t && t.matches('details.rk')) t.open = true; };
-addEventListener('hashchange', openRk); openRk();
 
-// Slide prioritas: buka di layar penuh, lanjut ke slide berikutnya, tautan #sl-... langsung membuka slidenya
-const zcap = zoom.querySelector('.zcap'), znav = zoom.querySelector('.znav');
+// Slide prioritas: buka di layar penuh (satu entri riwayat), lanjut ke slide berikutnya, tautan #sl-... langsung membuka slidenya
 let sls = [], at = -1;
 const slList = () => { const seen = new Set(); return [...document.querySelectorAll('#slide-top .st-g a.sl')].filter(a => !seen.has(a.href) && seen.add(a.href)); };
 const showSl = i => {
@@ -84,39 +147,53 @@ const showSl = i => {
   zcap.textContent = `${at + 1}/${sls.length} · ${a.dataset.cap}`;
   zoom.querySelector('.zsoal').href = '#' + a.dataset.id;
   zcap.hidden = znav.hidden = false;
+  history.replaceState({...history.state, dlg: 'sl'}, '', '#' + a.dataset.id);  // Berikutnya/Sebelumnya tidak menambah entri
   if (!zoom.open) zoom.showModal();
 };
 document.addEventListener('click', e => {
-  if (!zcap) return;
   const step = e.target.closest('.znav [data-step]');
   if (step) return showSl(at + +step.dataset.step);
-  if (e.target.closest('.zsoal')) return zoom.close();
-  const a = e.target.closest('a.sl'), go = e.target.closest('.slgo');
-  if (a || go) {
-    e.preventDefault(); sls = slList();
-    return showSl(go ? 0 : sls.findIndex(x => x.href === a.href));
+  const a = e.target.closest('a.sl'), start = e.target.closest('.slgo');
+  if (a || start) {
+    e.preventDefault(); sls = slList(); push({dlg: 'sl'});
+    return showSl(start ? 0 : sls.findIndex(x => x.href === a.href));
   }
-  // gambar biasa: tanpa keterangan dan navigasi
-  if (e.target.closest('figure img')) zcap.hidden = znav.hidden = true;
 });
 addEventListener('keydown', e => {
   if (!zoom.open || znav.hidden) return;
   if (e.key === 'ArrowRight') showSl(at + 1);
   if (e.key === 'ArrowLeft') showSl(at - 1);
 });
-const openSl = () => {
-  const id = decodeURIComponent(location.hash.slice(1));
-  if (!id.startsWith('sl-') || !document.getElementById(id)) return;
-  sls = slList(); const i = sls.findIndex(x => x.dataset.id === id);
-  if (i >= 0) showSl(i);
+// ditutup pengguna (klik atau Esc): tinggalkan entri riwayat dialognya
+zoom.addEventListener('close', () => {
+  const st = history.state;
+  if (!st?.dlg) return;  // sudah pindah entri (Back, ganti hash, Lihat soalnya)
+  if (st.pushed) history.back();
+  else history.replaceState({pos: st.pos}, '', location.pathname + location.search);
+});
+// Back/Forward atau ganti hash: buka slide bila entrinya slide, selain itu tutup dialog lalu pulihkan posisi
+const route = () => {
+  const st = history.state || {}, id = decodeURIComponent(location.hash.slice(1));
+  if (st.dlg === 'sl' || (!st.pos && id.startsWith('sl-'))) {
+    sls = slList(); const i = sls.findIndex(a => a.dataset.id === id);
+    if (i >= 0) return showSl(i);
+  }
+  if (zoom.open) zoom.close();
+  if (st.pos) settle(st.pos.id, st.pos.off); else if (id) go(id);
 };
-addEventListener('hashchange', openSl); addEventListener('load', openSl);
+addEventListener('popstate', route); addEventListener('hashchange', route);
+route();
+const run0 = run;
+addEventListener('pageshow', e => {  // browser memulihkan centang dan font sesudah skrip jalan: selaraskan, lalu ulangi posisi
+  syncKeys();
+  if (!e.persisted && run === run0) route();
+});
 
 // Kenapa jawabannya ini dan contoh soal per pilihan: data per tahun (why/<tahun>.json), dimuat saat pembahasan dibuka
 const whyData = {}, whyEsc = t => t.replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
 const whyLoad = yr => whyData[yr] ??= fetch(`why/${yr}.json?v=2`).then(r => r.ok ? r.json() : {}).catch(() => ({}));
 const whyFill = async d => {
-  const q = d.closest('.q'); if (!q || !q.id || d.dataset.why) return;
+  const q = d.closest('.q'); if (!q || !/^s\d{4}-/.test(q.id) || d.dataset.why) return;  // hanya bank soal Sumatif yang punya why/<tahun>.json
   d.dataset.why = 1;
   const w = (await whyLoad(q.id.slice(1, 5)))[q.id]; if (!w) return;
   const ops = [...q.querySelectorAll('.op')], L = 'abcdefgh';
