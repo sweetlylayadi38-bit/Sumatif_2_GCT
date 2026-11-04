@@ -140,9 +140,9 @@ document.addEventListener('click', e => {
 
 // Slide prioritas: buka di layar penuh (satu entri riwayat), lanjut ke slide berikutnya, tautan #sl-... langsung membuka slidenya
 let sls = [], at = -1;
-const slList = () => { const seen = new Set(); return [...document.querySelectorAll('#slide-top .st-g a.sl')].filter(a => !seen.has(a.href) && seen.add(a.href)); };
+const slList = sec => { const seen = new Set(); return sec ? [...sec.querySelectorAll('.st-g a.sl')].filter(a => !seen.has(a.href) && seen.add(a.href)) : []; };  // slide satu bagian (slide-top atau slide-f2)
 const showSl = i => {
-  sls = sls.length ? sls : slList(); at = (i + sls.length) % sls.length;
+  at = (i + sls.length) % sls.length;
   const a = sls[at]; big.src = a.href; big.alt = a.dataset.cap;
   zcap.textContent = `${at + 1}/${sls.length} · ${a.dataset.cap}`;
   zoom.querySelector('.zsoal').href = '#' + a.dataset.id;
@@ -155,7 +155,7 @@ document.addEventListener('click', e => {
   if (step) return showSl(at + +step.dataset.step);
   const a = e.target.closest('a.sl'), start = e.target.closest('.slgo');
   if (a || start) {
-    e.preventDefault(); sls = slList(); push({dlg: 'sl'});
+    e.preventDefault(); sls = slList((a || start).closest('.lec')); push({dlg: 'sl'});
     return showSl(start ? 0 : sls.findIndex(x => x.href === a.href));
   }
 });
@@ -175,7 +175,7 @@ zoom.addEventListener('close', () => {
 const route = () => {
   const st = history.state || {}, id = decodeURIComponent(location.hash.slice(1));
   if (st.dlg === 'sl' || (!st.pos && id.startsWith('sl-'))) {
-    sls = slList(); const i = sls.findIndex(a => a.dataset.id === id);
+    sls = slList(document.getElementById(id)?.closest('.lec')); const i = sls.findIndex(a => a.dataset.id === id);
     if (i >= 0) return showSl(i);
   }
   if (zoom.open) zoom.close();
