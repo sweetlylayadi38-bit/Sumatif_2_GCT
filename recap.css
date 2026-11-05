@@ -263,3 +263,8 @@ a.st-c:hover{background:var(--accent);color:var(--bg)}
 .hp li{padding:.4rem 0}
 .hsl{display:block;color:var(--muted);font-size:1rem}
 .hw{color:var(--muted)}
+.fq{padding-block:1.4rem;border-top:1px solid var(--line);content-visibility:auto;contain-intrinsic-size:auto 600px}
+.fq>details>summary{font:italic 600 1.1rem var(--text);color:var(--accent-ink);cursor:pointer;width:fit-content;padding-block:.2rem}
+.fq>details[open]>summary{margin-bottom:.4rem}
+.fq>details>.q:first-of-type{border-top:0}
+.fq figure{max-width:36rem}

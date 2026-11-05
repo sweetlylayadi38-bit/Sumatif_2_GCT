@@ -12,7 +12,7 @@ const answer = op => {  // hijau bila benar; bila salah, pilihan itu merah dan k
   q.querySelector('details').open = true;
   q.classList.add('dijawab');
 };
-for (const [id, i] of Object.entries(store)) { const op = document.getElementById(id)?.querySelectorAll('.op')[i]; if (op) answer(op); }
+for (const [id, i] of Object.entries(store)) document.querySelectorAll(`[id="${id}"]`).forEach(q => { const op = q.querySelectorAll('.op')[i]; if (op) answer(op); });  // hubungan.html memuat soal yang sama di beberapa Formatif
 
 document.addEventListener('click', e => {
   if (e.target.closest('dialog')) {

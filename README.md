@@ -6,7 +6,7 @@ Buka `index.html`, atau aktifkan GitHub Pages (Settings, Pages, branch `main`, f
 
 - `index.html`: isi halaman
 - `soal-top.html`: soal dan pilihan jawaban dari top slide, dikelompokkan per kuliah dan slide; memakai `recap.css`, `recap.js`, dan `why/` yang sama
-- `hubungan.html`: hubungan 92 soal Formatif 2 dengan 531 soal Sumatif 2, dengan penilaian cocok langsung, satu konsep, atau tidak ada padanan, dan tautan dua arah ke soalnya
+- `hubungan.html`: hubungan 92 soal Formatif 2 dengan 531 soal Sumatif 2, urut nomor 1-92, dengan soal Sumatif yang bisa dikerjakan langsung di bawah tiap nomor
 - `recap.css`: tampilan
 - `recap.js`: interaksi (jawab soal, reset, perbesar gambar, buka rangkuman, layar slide prioritas dengan tombol berikutnya)
 - `why/<tahun>.json`: alasan untuk setiap pilihan a-e dan contoh soal bila jawabannya pilihan lain; dimuat saat pembahasan soal dibuka
