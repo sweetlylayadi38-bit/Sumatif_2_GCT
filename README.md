@@ -5,6 +5,7 @@ Recap kuliah K10-K20 Modul Ginjal dan Cairan Tubuh dan bank soal Sumatif 2 (2017
 Buka `index.html`, atau aktifkan GitHub Pages (Settings, Pages, branch `main`, folder root).
 
 - `index.html`: isi halaman
+- `soal-top.html`: soal dan pilihan jawaban dari top slide, dikelompokkan per kuliah dan slide; memakai `recap.css`, `recap.js`, dan `why/` yang sama
 - `recap.css`: tampilan
 - `recap.js`: interaksi (jawab soal, reset, perbesar gambar, buka rangkuman, layar slide prioritas dengan tombol berikutnya)
 - `why/<tahun>.json`: alasan untuk setiap pilihan a-e dan contoh soal bila jawabannya pilihan lain; dimuat saat pembahasan soal dibuka

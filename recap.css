@@ -225,3 +225,15 @@ dialog:has(.znav:not([hidden])) img{max-height:calc(96dvh - 7.5rem)}
 .cs summary{font:italic 600 .98rem var(--text);color:var(--accent-ink);cursor:pointer;width:fit-content}
 .cs p{margin:.35rem 0 0!important}
 .cs[open]{background:rgb(var(--bg-rgb) / .5);border-radius:4px;padding:.4rem .6rem .5rem;margin-left:-.6rem}
+
+/* Halaman soal top slide */
+.ts{margin-top:2.75rem;padding-top:1.25rem;border-top:1px solid var(--line)}
+.ts:first-child{margin-top:0;padding-top:0;border-top:0}
+.ts h3{margin:0 0 .6rem}
+.ts .st-c{font-style:normal;vertical-align:.15em}
+.ts .st-g{grid-template-columns:minmax(0,20rem);margin:.5rem 0 1rem}
+.ts .q:first-of-type{border-top:0}
+a.st-c{text-decoration:none}
+a.st-c:hover{background:var(--accent);color:var(--bg)}
+.soalgo{display:inline-block;font:italic 600 1.1rem var(--text);color:var(--accent-ink);background:var(--surface);border:1px solid var(--accent);border-radius:4px;padding:.5rem 1rem;text-decoration:none}
+.soalgo:hover{background:var(--accent-soft)}
